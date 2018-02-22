@@ -2,26 +2,34 @@ package example.udf
 
 import org.scalatest.FunSuite
 import example.test.utils._
+import org.apache.spark.sql.expressions.UserDefinedAggregateFunction
 
 class functionsTest extends FunSuite {
 
-  test("maxInt works as expected") {
+  import example.udf.functions._
 
-    import example.udf.functions._
+  def check(from: Int, to: Int, expected: Any, udaf: String => UserDefinedAggregateFunction): Unit = {
     import SparkRunner._
 
     runJob { spark =>
       import spark.implicits._
 
-      val df = (0 to 100).toDF("value")
+      val df = (from to to).toDF("value")
+      val udafUnderTest = udaf("value")
 
-      val maxUdaf = maxInt("value")
+      val result = df.agg(udafUnderTest('value)).head().toSeq.head
 
-      val result = df.agg(maxUdaf('value)).head().toSeq
-
-      assert(result === Seq(100))
+      assert(result === expected)
     }
-
   }
 
+  test("maxInt works as expected") {
+    check(from = 0, to = 100, expected = 100, maxInt)
+  }
+
+  test("sumInt works as expected") {
+    check(from = 0, to = 5, expected = 15, sumInt)
+  }
+
+  
 }
