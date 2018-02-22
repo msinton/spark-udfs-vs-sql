@@ -31,5 +31,11 @@ class functionsTest extends FunSuite {
     check(from = 0, to = 5, expected = 15, sumInt)
   }
 
-  
+  test("countInt works as expected") {
+    check(from = 0, to = 100, expected = 101, countInt)
+  }
+
+  test("meanInt works as expected") {
+    check(from = 0, to = 100, expected = 50.0, meanInt)
+  }
 }
