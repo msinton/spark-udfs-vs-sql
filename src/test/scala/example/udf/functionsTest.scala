@@ -2,6 +2,7 @@ package example.udf
 
 import org.scalatest.FunSuite
 import example.test.utils._
+import org.apache.spark.sql
 import org.apache.spark.sql.expressions.UserDefinedAggregateFunction
 
 class functionsTest extends FunSuite {
@@ -38,4 +39,29 @@ class functionsTest extends FunSuite {
   test("meanInt works as expected") {
     check(from = 0, to = 100, expected = 50.0, meanInt)
   }
+
+  test("stddevInt works as expected") {
+    check(from = 0, to = 10, expected = 3.3166247903554, stddevInt(5.0))
+  }
+
+  test("spark equivalents") {
+    import SparkRunner._
+
+    runJob { spark =>
+      import spark.implicits._
+
+      val df = (0 to 10).toDF("value")
+
+      assert(df.agg(sql.functions.stddev('value)).head().toSeq.head === 3.3166247903554)
+
+      assert(df.agg(sql.functions.mean('value)).head().toSeq.head === 5.0)
+
+      assert(df.agg(sql.functions.max('value)).head().toSeq.head === 10)
+
+      assert(df.agg(sql.functions.sum('value)).head().toSeq.head === 55)
+
+      assert(df.agg(sql.functions.count('value)).head().toSeq.head === 11)
+    }
+  }
+
 }
