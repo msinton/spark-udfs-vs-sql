@@ -5,7 +5,7 @@ import org.apache.spark.sql.expressions.{MutableAggregationBuffer, UserDefinedAg
 import org.apache.spark.sql.types._
 
 /**
-  * UDFs to be compared with sql function equivalents.
+  * UDAFs to be compared with sql function equivalents.
   */
 object functions {
 
@@ -21,8 +21,8 @@ object functions {
 
     override def deterministic: Boolean = true
 
-    override def initialize(buffer: MutableAggregationBuffer): Unit = buffer(0) =
-      Int.MinValue
+    override def initialize(buffer: MutableAggregationBuffer): Unit =
+      buffer(0) = Int.MinValue
 
     override def update(buffer: MutableAggregationBuffer, input: Row): Unit =
       if (input.getInt(0) > buffer.getInt(0))
@@ -48,8 +48,8 @@ object functions {
 
     override def deterministic: Boolean = true
 
-    override def initialize(buffer: MutableAggregationBuffer): Unit = buffer(0) =
-      0L
+    override def initialize(buffer: MutableAggregationBuffer): Unit =
+      buffer(0) = 0L
 
     override def update(buffer: MutableAggregationBuffer, input: Row): Unit =
       buffer(0) = buffer.getLong(0) + input.getInt(0)
@@ -73,8 +73,8 @@ object functions {
 
     override def deterministic: Boolean = true
 
-    override def initialize(buffer: MutableAggregationBuffer): Unit = buffer(0) =
-      0L
+    override def initialize(buffer: MutableAggregationBuffer): Unit =
+      buffer(0) = 0L
 
     override def update(buffer: MutableAggregationBuffer, input: Row): Unit =
       buffer(0) = buffer.getLong(0) + 1
